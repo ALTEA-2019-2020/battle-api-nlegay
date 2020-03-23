@@ -1,11 +1,14 @@
 package com.miage.altea.battle_api.service;
 
 import com.miage.altea.battle_api.bo.*;
+import com.miage.altea.battle_api.exception.BattleNotFoundException;
+import com.miage.altea.battle_api.exception.TrainerIsNotTurnException;
+import com.miage.altea.battle_api.exception.TrainerNotAlivePokemonException;
+import com.miage.altea.battle_api.exception.TrainerNotFoundException;
 import com.miage.altea.battle_api.repository.BattleMemory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,25 +35,32 @@ public class BattleServiceImpl implements BattleService {
     }
 
     @Override
-    public Battle getStateBattle(UUID uuid) {
-        return BattleMemory.getBattle(uuid);
+    public Battle getStateBattle(UUID uuid) throws BattleNotFoundException {
+        Battle battle = BattleMemory.getBattle(uuid);
+        if (battle != null) {
+            return battle;
+        }
+        throw new BattleNotFoundException("Battle not found");
     }
 
     @Override
-    public ResponseEntity<Battle> attack(UUID uuid, String trainerName) {
+    public Battle attack(UUID uuid, String trainerName) throws TrainerNotAlivePokemonException, TrainerIsNotTurnException {
         return BattleMemory.getBattle(uuid).attack(trainerName);
     }
 
     @Override
-    public UUID createBattle(String trainer, String opponent) {
+    public UUID createBattle(String trainer, String opponent) throws TrainerNotFoundException {
         Battle battle = new Battle( createBattleTrainer(trainer), createBattleTrainer(opponent) );
         battle.setNextTurn();
         BattleMemory.insertBattle(battle);
         return battle.getUuid();
     }
 
-    private BattleTrainer createBattleTrainer(String trainer) {
+    private BattleTrainer createBattleTrainer(String trainer) throws TrainerNotFoundException {
         Trainer trainerBO = restTemplateTrainer.getForObject(trainerServiceUrl+"trainers/{name}", Trainer.class, trainer);
+        if (trainerBO == null || trainerBO.getName() == null) {
+            throw new TrainerNotFoundException("Trainer not found");
+        }
         List<BattlePokemon> team = new ArrayList<>();
         for ( Pokemon pokemon : trainerBO.getTeam() ) {
             PokemonType pokemonType = restTemplate

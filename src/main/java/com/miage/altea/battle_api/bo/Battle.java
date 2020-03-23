@@ -1,6 +1,8 @@
 package com.miage.altea.battle_api.bo;
 
-import org.springframework.http.ResponseEntity;
+import com.miage.altea.battle_api.exception.TrainerIsNotTurnException;
+import com.miage.altea.battle_api.exception.TrainerNotAlivePokemonException;
+import com.miage.altea.battle_api.utils.StatsCalculator;
 
 import java.util.UUID;
 
@@ -46,7 +48,7 @@ public class Battle {
         return null;
     }
 
-    public ResponseEntity<Battle> attack(String trainerName) {
+    public Battle attack(String trainerName) throws TrainerNotAlivePokemonException, TrainerIsNotTurnException {
         BattleTrainer trainerAttacker;
         BattleTrainer trainerDefender;
         if ( trainer.getName().equals(trainerName) ) {
@@ -61,7 +63,7 @@ public class Battle {
             BattlePokemon pokemonAttacker = trainerAttacker.getPokemonAlive();
             BattlePokemon pokemonDefender = trainerDefender.getPokemonAlive();
             if ( pokemonAttacker != null && pokemonDefender != null ) {
-                pokemonDefender.setHp(pokemonDefender.getHp() - calculateDamage(pokemonAttacker.getLevel(), pokemonAttacker.getAttack(), pokemonDefender.getDefense()));
+                pokemonDefender.setHp(pokemonDefender.getHp() - StatsCalculator.calculateDamage(pokemonAttacker.getLevel(), pokemonAttacker.getAttack(), pokemonDefender.getDefense()));
                 if (pokemonDefender.getHp() <= 0) {
                     pokemonDefender.setAlive(false);
                     pokemonDefender.setKo(true);
@@ -69,17 +71,13 @@ public class Battle {
                 }
                 trainerAttacker.setNextTurn(false);
                 trainerDefender.setNextTurn(true);
-                return ResponseEntity.ok(this);
+                return this;
             } else {
-                //A trainer doesn't have alive pokemons
-                return ResponseEntity.badRequest().eTag("A trainer doesn't have alive pokemons").build();
+                throw new TrainerNotAlivePokemonException("A trainer doesn't have any alive pokemons");
             }
         } else {
-            return ResponseEntity.badRequest().build();
+            throw new TrainerIsNotTurnException("It isn't this trainer's turn");
         }
     }
 
-    private int calculateDamage(int level, int attack, int defenseOpponent) {
-        return (int)( (double)(2*level)/(double)5+2*(double)attack/(double)defenseOpponent+2 );
-    }
 }

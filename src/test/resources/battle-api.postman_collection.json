@@ -10,17 +10,8 @@
 			"request": {
 				"method": "POST",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"trainer\": \"Ash\",\r\n  \"opponent\": \"Misty\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "http://localhost:8080/battles",
+					"raw": "http://localhost:8080/battles?trainer=Ash&opponent=Misty",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -28,6 +19,16 @@
 					"port": "8080",
 					"path": [
 						"battles"
+					],
+					"query": [
+						{
+							"key": "trainer",
+							"value": "Ash"
+						},
+						{
+							"key": "opponent",
+							"value": "Misty"
+						}
 					]
 				},
 				"description": "Créer un combat"
@@ -59,7 +60,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/battles/2d831426-b1c4-43c3-a932-67a9feb13b63",
+					"raw": "http://localhost:8080/battles/ce30f2fc-5156-4352-b7b6-034982f9f6aa",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -67,7 +68,7 @@
 					"port": "8080",
 					"path": [
 						"battles",
-						"2d831426-b1c4-43c3-a932-67a9feb13b63"
+						"ce30f2fc-5156-4352-b7b6-034982f9f6aa"
 					]
 				}
 			},
@@ -79,7 +80,7 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/battles/af8bcc90-d02c-4551-a6b0-236ee0269077/Ash/attack",
+					"raw": "http://localhost:8080/battles/ce30f2fc-5156-4352-b7b6-034982f9f6aa/Ash/attack",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -87,7 +88,7 @@
 					"port": "8080",
 					"path": [
 						"battles",
-						"af8bcc90-d02c-4551-a6b0-236ee0269077",
+						"ce30f2fc-5156-4352-b7b6-034982f9f6aa",
 						"Ash",
 						"attack"
 					]

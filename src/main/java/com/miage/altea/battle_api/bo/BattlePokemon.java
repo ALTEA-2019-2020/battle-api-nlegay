@@ -10,7 +10,7 @@ public class BattlePokemon {
 
     private int id;
     private PokemonType type;
-    private int maxHP;
+    private int maxHp;
     private int attack;
     private int defense;
     private int speed;
@@ -41,12 +41,12 @@ public class BattlePokemon {
         this.type = type;
     }
 
-    public int getMaxHP() {
-        return maxHP;
+    public int getMaxHp() {
+        return maxHp;
     }
 
-    public void setMaxHP(int maxHP) {
-        this.maxHP = maxHP;
+    public void setMaxHp(int maxHp) {
+        this.maxHp = maxHp;
     }
 
     public int getAttack() {

@@ -1,6 +1,5 @@
 package com.miage.altea.battle_api.controller;
 
-import com.miage.altea.battle_api.bo.TrainerFigthers;
 import com.miage.altea.battle_api.exception.BattleNotFoundException;
 import com.miage.altea.battle_api.exception.TrainerIsNotTurnException;
 import com.miage.altea.battle_api.exception.TrainerNotAlivePokemonException;
@@ -10,10 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/battles")
 public class BattleController {
 
@@ -24,9 +23,9 @@ public class BattleController {
     }
 
     @PostMapping
-    ResponseEntity create(@Valid @RequestBody TrainerFigthers trainerFigthers) {
+    ResponseEntity create(@RequestParam String trainer, @RequestParam String opponent) {
         try {
-            return ResponseEntity.ok( battleService.createBattle(trainerFigthers.getTrainer(), trainerFigthers.getOpponent()) );
+            return ResponseEntity.ok( battleService.createBattle(trainer, opponent) );
         } catch (TrainerNotFoundException | TrainerNotAlivePokemonException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

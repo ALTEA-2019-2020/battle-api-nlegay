@@ -1,6 +1,7 @@
 package com.miage.altea.battle_api.bo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.miage.altea.battle_api.exception.TrainerNotAlivePokemonException;
 
 import java.util.List;
 
@@ -36,7 +37,11 @@ public class BattleTrainer {
     }
 
     @JsonIgnore
-    public BattlePokemon getPokemonAlive() {
-        return team.stream().filter(e -> e.isAlive()).findFirst().orElseGet(null);
+    public BattlePokemon getPokemonAlive() throws TrainerNotAlivePokemonException {
+        BattlePokemon battlePokemon = team.stream().filter(e -> e.isAlive()).findFirst().orElseGet(null);
+        if ( battlePokemon != null ) {
+            return battlePokemon;
+        }
+        throw new TrainerNotAlivePokemonException("A trainer doesn't have any alive pokemons");
     }
 }

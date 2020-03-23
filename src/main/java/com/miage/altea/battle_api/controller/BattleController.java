@@ -27,7 +27,7 @@ public class BattleController {
     ResponseEntity create(@Valid @RequestBody TrainerFigthers trainerFigthers) {
         try {
             return ResponseEntity.ok( battleService.createBattle(trainerFigthers.getTrainer(), trainerFigthers.getOpponent()) );
-        } catch (TrainerNotFoundException e) {
+        } catch (TrainerNotFoundException | TrainerNotAlivePokemonException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -50,7 +50,7 @@ public class BattleController {
     ResponseEntity attack(@PathVariable UUID uuid, @PathVariable String trainerName) {
         try {
             return ResponseEntity.ok( battleService.attack(uuid, trainerName) );
-        } catch (TrainerNotAlivePokemonException | TrainerIsNotTurnException e) {
+        } catch (TrainerNotAlivePokemonException | TrainerIsNotTurnException | BattleNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

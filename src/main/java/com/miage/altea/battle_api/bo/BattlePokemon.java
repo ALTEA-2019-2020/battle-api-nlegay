@@ -1,5 +1,7 @@
 package com.miage.altea.battle_api.bo;
 
+import com.miage.altea.battle_api.utils.StatsCalculator;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BattlePokemon {
@@ -101,5 +103,17 @@ public class BattlePokemon {
 
     public void setAlive(boolean alive) {
         this.alive = alive;
+    }
+
+    /**
+     * Pokemon attack pokemonDefender
+     */
+    public void attack(BattlePokemon pokemonDefender) {
+        pokemonDefender.setHp(pokemonDefender.getHp() - StatsCalculator.calculateDamage( level, attack, pokemonDefender.getDefense() ));
+        if (pokemonDefender.getHp() <= 0) {
+            pokemonDefender.setAlive(false);
+            pokemonDefender.setKo(true);
+            pokemonDefender.setHp(0);
+        }
     }
 }

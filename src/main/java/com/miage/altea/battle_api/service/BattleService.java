@@ -17,8 +17,8 @@ public interface BattleService {
 
     public Battle getStateBattle(UUID uuid) throws BattleNotFoundException;
 
-    public Battle attack(UUID uuid, String trainerName) throws TrainerNotAlivePokemonException, TrainerIsNotTurnException;
+    public Battle attack(UUID uuid, String trainerName) throws TrainerNotAlivePokemonException, TrainerIsNotTurnException, BattleNotFoundException;
 
-    public UUID createBattle(String trainer, String opponent) throws TrainerNotFoundException;
+    public UUID createBattle(String trainer, String opponent) throws TrainerNotFoundException, TrainerNotAlivePokemonException;
 
 }

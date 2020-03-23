@@ -44,12 +44,16 @@ public class BattleServiceImpl implements BattleService {
     }
 
     @Override
-    public Battle attack(UUID uuid, String trainerName) throws TrainerNotAlivePokemonException, TrainerIsNotTurnException {
-        return BattleMemory.getBattle(uuid).attack(trainerName);
+    public Battle attack(UUID uuid, String trainerName) throws TrainerNotAlivePokemonException, TrainerIsNotTurnException, BattleNotFoundException {
+        Battle battle = BattleMemory.getBattle(uuid);
+        if (battle != null) {
+            return battle.attack(trainerName);
+        }
+        throw new BattleNotFoundException("Battle not found");
     }
 
     @Override
-    public UUID createBattle(String trainer, String opponent) throws TrainerNotFoundException {
+    public UUID createBattle(String trainer, String opponent) throws TrainerNotFoundException, TrainerNotAlivePokemonException {
         Battle battle = new Battle( createBattleTrainer(trainer), createBattleTrainer(opponent) );
         battle.setNextTurn();
         BattleMemory.insertBattle(battle);

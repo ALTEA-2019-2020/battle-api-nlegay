@@ -2,7 +2,6 @@ package com.miage.altea.battle_api.bo;
 
 import com.miage.altea.battle_api.exception.TrainerIsNotTurnException;
 import com.miage.altea.battle_api.exception.TrainerNotAlivePokemonException;
-import com.miage.altea.battle_api.utils.StatsCalculator;
 
 import java.util.UUID;
 
@@ -29,7 +28,7 @@ public class Battle {
         return opponent;
     }
 
-    public void setNextTurn() {
+    public void setNextTurn() throws TrainerNotAlivePokemonException {
         if (trainer.getPokemonAlive().getSpeed() > opponent.getPokemonAlive().getSpeed()) {
             trainer.setNextTurn(true);
             opponent.setNextTurn(false);
@@ -60,21 +59,10 @@ public class Battle {
         }
         // check if it's his turn
         if (trainerAttacker.getNextTurn()) {
-            BattlePokemon pokemonAttacker = trainerAttacker.getPokemonAlive();
-            BattlePokemon pokemonDefender = trainerDefender.getPokemonAlive();
-            if ( pokemonAttacker != null && pokemonDefender != null ) {
-                pokemonDefender.setHp(pokemonDefender.getHp() - StatsCalculator.calculateDamage(pokemonAttacker.getLevel(), pokemonAttacker.getAttack(), pokemonDefender.getDefense()));
-                if (pokemonDefender.getHp() <= 0) {
-                    pokemonDefender.setAlive(false);
-                    pokemonDefender.setKo(true);
-                    pokemonDefender.setHp(0);
-                }
-                trainerAttacker.setNextTurn(false);
-                trainerDefender.setNextTurn(true);
-                return this;
-            } else {
-                throw new TrainerNotAlivePokemonException("A trainer doesn't have any alive pokemons");
-            }
+            trainerAttacker.getPokemonAlive().attack(trainerDefender.getPokemonAlive());
+            trainerDefender.setNextTurn(true);
+            trainerAttacker.setNextTurn(false);
+            return this;
         } else {
             throw new TrainerIsNotTurnException("It isn't this trainer's turn");
         }
